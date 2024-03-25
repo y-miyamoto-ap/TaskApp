@@ -158,10 +158,11 @@ class MainActivity : AppCompatActivity() {
      * リストの一覧を更新する
      */
     private suspend fun reloadListView(tasks: List<Task>) {
+        allTaskList.clear()
         allTaskList.addAll(tasks)
         withContext(Dispatchers.Main) {
             taskAdapter.updateTaskList(tasks)
+            binding.categorySearchText.setText("")
         }
-        binding.categorySearchText.setText("")
     }
 }
