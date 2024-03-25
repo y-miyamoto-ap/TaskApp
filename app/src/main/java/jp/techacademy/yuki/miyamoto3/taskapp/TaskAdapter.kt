@@ -40,6 +40,17 @@ class TaskAdapter(context: Context) : BaseAdapter() {
         return view
     }
 
+    fun filteringTaskList(taskList: List<Task>, category: String) {
+        if (category != "") {
+            val filteredTaskList = taskList.filter {
+                it.category == category
+            }
+            updateTaskList(filteredTaskList)
+        } else {
+            updateTaskList(taskList)
+        }
+    }
+
     fun updateTaskList(taskList: List<Task>) {
         // 一度クリアしてから新しいタスク一覧に入替
         this.taskList.clear()

@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var realm: Realm
+    private var allTaskList = mutableListOf<Task>()
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){}
 
@@ -72,13 +72,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.searchButton.setOnClickListener {
             val category = binding.categorySearchText.text.toString()
-            if(category != "") {
-                val tasks = realm.query<Task>("category==$0", category).sort("date", Sort.DESCENDING).find()
-                taskAdapter.updateTaskList(tasks)
-            } else {
-                val tasks = realm.query<Task>().sort("date", Sort.DESCENDING).find()
-                taskAdapter.updateTaskList(tasks)
-            }
+            taskAdapter.filteringTaskList(allTaskList, category)
         }
 
         // TaskAdapterを生成し、ListViewに設定する
@@ -164,6 +158,7 @@ class MainActivity : AppCompatActivity() {
      * リストの一覧を更新する
      */
     private suspend fun reloadListView(tasks: List<Task>) {
+        allTaskList.addAll(tasks)
         withContext(Dispatchers.Main) {
             taskAdapter.updateTaskList(tasks)
         }
